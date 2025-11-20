@@ -94,6 +94,44 @@ app.post('/api/gallery', async (req: Request, res: Response) => {
   }
 });
 
+app.put('/api/gallery/:id', async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { image_url, title, category, description } = req.body;
+    
+    const { data, error } = await supabase
+      .from('gallery')
+      .update({ image_url, title, category, description })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    if (!data) {
+      return res.status(404).json({ error: 'Gallery item not found' });
+    }
+    res.json(data);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.delete('/api/gallery/:id', async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    
+    const { error } = await supabase
+      .from('gallery')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+    res.json({ message: 'Gallery item deleted successfully' });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Testimonials endpoints
 app.get('/api/testimonials', async (req: Request, res: Response) => {
   try {
@@ -121,6 +159,44 @@ app.post('/api/testimonials', async (req: Request, res: Response) => {
 
     if (error) throw error;
     res.status(201).json(data);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.put('/api/testimonials/:id', async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { name, email, rating, comment, image_url } = req.body;
+    
+    const { data, error } = await supabase
+      .from('testimonials')
+      .update({ name, email, rating, comment, image_url })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    if (!data) {
+      return res.status(404).json({ error: 'Testimonial not found' });
+    }
+    res.json(data);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.delete('/api/testimonials/:id', async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    
+    const { error } = await supabase
+      .from('testimonials')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+    res.json({ message: 'Testimonial deleted successfully' });
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
