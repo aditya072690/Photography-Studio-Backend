@@ -10,6 +10,10 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+// Trust proxy - Required for Railway and other hosting platforms
+// This allows Express to correctly identify the client IP when behind a proxy
+app.set('trust proxy', true);
+
 // Initialize Supabase client
 const supabaseUrl = process.env.SUPABASE_URL || '';
 const supabaseKey = process.env.SUPABASE_ANON_KEY || '';
