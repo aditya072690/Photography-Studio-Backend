@@ -15,14 +15,18 @@ const PORT = process.env.PORT || 3001;
 app.set('trust proxy', true);
 
 // Initialize Supabase client
+// Use service_role key for backend operations (bypasses RLS)
+// This is safe because it's server-side only
 const supabaseUrl = process.env.SUPABASE_URL || '';
-const supabaseKey = process.env.SUPABASE_ANON_KEY || '';
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || '';
 
-if (!supabaseUrl || !supabaseKey) {
+if (!supabaseUrl || !supabaseServiceKey) {
   console.warn('Warning: Supabase credentials not found. Some features may not work.');
 }
 
-const supabase = createClient(supabaseUrl, supabaseKey);
+// Use service_role key for admin operations (update/delete)
+// Falls back to anon key if service_role not available
+const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 // Middleware
 // CORS configuration - allows requests from frontend
